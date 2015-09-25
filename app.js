@@ -1,8 +1,12 @@
 var express = require('express');
 var cfenv = require('cfenv');
+var util = require('util');
 var bodyParser = require('body-parser');
 var url = require('./models/url')
 var app = express();
+
+// get the app environment from Cloud Foundry
+var appEnv = cfenv.getAppEnv();
 
 // serve the files out of ./public as our main files
 app.use(express.static(__dirname + '/public'));
@@ -13,14 +17,16 @@ app.use(bodyParser.text({ type: 'text/plain' }));
 // define routes
 app.post('/api/encurtar', function(req, res) {
 
-  u = url.buscarOuCriarNovaUrl(req.body);
+  var u = url.buscarOuCriarNovaUrl(req.body);
   
+  var status = 200;
   if(u.nova) {
-    res.sendStatus(201);  
-  } else {
-    res.sendStatus(200);
+    status = 201;
   }
-  
+
+  var urlCurta = util.format('%s/r/%s', appEnv.url, u.url.id);
+  res.location(urlCurta);
+  res.sendStatus(status);
 });
 
 app.get('/api/stats', function(req, res) {
@@ -31,8 +37,7 @@ app.get('/r/', function(req, res) {
 
 });
 
-// get the app environment from Cloud Foundry
-var appEnv = cfenv.getAppEnv();
+
 
 app.listen(appEnv.port, function(){
   console.log("server starting on " + appEnv.url);
