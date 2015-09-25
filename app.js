@@ -14,13 +14,12 @@ app.use(bodyParser.text({ type: 'text/plain' }));
 app.post('/api/encurtar', function(req, res) {
 
   u = url.buscarOuCriarNovaUrl(req.body);
-  // if(u.nova) {
-  //   res.sendStatus(201);  
-  // } else {
-  //   res.sendStatus(200);
-  // }
-
-  res.sendStatus(200);
+  
+  if(u.nova) {
+    res.sendStatus(201);  
+  } else {
+    res.sendStatus(200);
+  }
   
 });
 

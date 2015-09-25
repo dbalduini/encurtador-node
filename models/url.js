@@ -1,13 +1,28 @@
 var random = require('../middlewares/random');
+var cache = require('../middlewares/cache');
 
-var cache = {};
+// Constants
 var tamanho = 5;
 
+// Module
 var url = {
 
   buscarOuCriarNovaUrl: function(destino) {
-    console.log(this.gerarId());
+    
+    if (cache.exists(destino)) {
+      return {url: cache.get(destino), nova: false};
+    }
 
+    var Url = {
+      id: this.gerarId(),
+      destino: destino,
+      criacao: new Date()
+    }
+
+    // set the new url into the cache
+    cache.put(destino, Url)
+
+    return {url: Url, nova: true};
   },
 
   gerarId: function() {
