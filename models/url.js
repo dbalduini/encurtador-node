@@ -7,26 +7,33 @@ var tamanho = 5;
 // Module
 var url = {
 
+  buscar: function(destino) {
+    return cache.get(destino);
+  },
+
   buscarOuCriarNovaUrl: function(destino) {
+    var Url = buscarPorUrl(destino);
     
-    if (cache.exists(destino)) {
-      return {url: cache.get(destino), nova: false};
+    if ( Url ) {
+      Url.nova = false;
+      return Url;
     }
 
-    var Url = {
+    Url = {
       id: this.gerarId(),
       destino: destino,
       criacao: new Date()
     }
 
     // set the new url into the cache
-    cache.put(destino, Url)
+    cache.put(Url.id, Url);
+    Url.nova = true;
 
-    return {url: Url, nova: true};
+    return Url;
   },
 
   gerarId: function() {
-    
+
     function novoId() {
       var value = new Array(tamanho);
       for(var i = 0; i <= tamanho; i++){
@@ -43,5 +50,17 @@ var url = {
   },
 
 };
+
+
+function buscarPorUrl(destino) {
+  var Url;
+  cache.keys().forEach(function(element, key, _array){
+    var u = cache.get(element);
+    if(u.destino == destino){
+      Url = u;
+    }
+  });
+  return Url;
+}
 
 module.exports = url;

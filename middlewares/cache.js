@@ -5,7 +5,7 @@ var repo = {};
 var cache = {
 
 	put: function(id, obj) {
-		repo[id] = obj;
+		if( id ) { repo[id] = obj }
 	},
 
 	del: function(id) {
@@ -18,6 +18,10 @@ var cache = {
 
 	exists: function(id) {
 		return this.get(id) != undefined
+	},
+
+	keys: function() {
+		return Object.keys(repo);
 	}
 
 }

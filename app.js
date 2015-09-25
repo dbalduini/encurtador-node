@@ -12,28 +12,39 @@ var appEnv = cfenv.getAppEnv();
 app.use(express.static(__dirname + '/public'));
 
 // Parse plain text bodies from request
-app.use(bodyParser.text({ type: 'text/plain' }));
+app.use(bodyParser.text({ type: 'text/plain', strict: true }));
 
-// define routes
+// Rota para encurtar url
 app.post('/api/encurtar', function(req, res) {
-
-  var u = url.buscarOuCriarNovaUrl(req.body);
-  
-  var status = 200;
-  if(u.nova) {
-    status = 201;
+  // Accept only text/plain
+  if( !req.is('text') ) {
+    res.writeHead(400, {'Accept': 'text/plain'});
+    res.end();
+  } else {
+    var u = url.buscarOuCriarNovaUrl(req.body);
+    var status = 200;
+    if(u.nova) {
+      status = 201;
+    }
+    var urlCurta = util.format('%s/r/%s', appEnv.url, u.id);
+    res.location(urlCurta);
+    res.sendStatus(status);
   }
+});
 
-  var urlCurta = util.format('%s/r/%s', appEnv.url, u.url.id);
-  res.location(urlCurta);
-  res.sendStatus(status);
+// Rota para redirecionar para a url original
+app.get('/r/:id', function(req, res) {
+	var Url = url.buscar(req.params.id);
+	console.log(Url);
+	if( Url ) {
+		res.redirect(301, Url.destino);
+	} else {
+		res.sendStatus(404);
+	}
+
 });
 
 app.get('/api/stats', function(req, res) {
-
-});
-
-app.get('/r/', function(req, res) {
 
 });
 
