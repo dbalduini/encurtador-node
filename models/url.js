@@ -1,40 +1,32 @@
+var random = require('../middlewares/random');
 
 var cache = {};
-var simbolos = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890_-+";
 var tamanho = 5;
-
 
 var url = {
 
-	buscarOuCriarNovaUrl: function(destino) {
-		console.log(this.gerarId());
+  buscarOuCriarNovaUrl: function(destino) {
+    console.log(this.gerarId());
 
+  },
 
-	},
+  gerarId: function() {
+    
+    function novoId() {
+      var value = new Array(tamanho);
+      for(var i = 0; i <= tamanho; i++){
+        value[i] = random.randomSimbol(); 
+      }
+      return value.join('');
+    }
 
-	gerarId: function() {
-		var value = new Array(tamanho);
-		
-		function novoId() {
-			for(var i = 0; i <= tamanho; i++){
-				value[i] = simbolos[ randomInt(0,tamanho) ];
-			}
-			return value.join('');
-		};
+    do {
+      id = novoId() 
+    } while (id in cache)
 
-		do {
-			id = novoId()	
-		} while (id in cache)
-
-		return id;
-	},
-
-
+    return id;
+  },
 
 };
-
-	function randomInt(low, high) {
-    	return Math.floor(Math.random() * (high - low) + low);
-	}
 
 module.exports = url;
