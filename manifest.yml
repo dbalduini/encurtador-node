@@ -3,6 +3,6 @@ applications:
   memory: 256M
   instances: 1
   domain: mybluemix.net
-  name: encurtador
+  name: encurtador-node
   host: encurtador
   disk_quota: 1024M

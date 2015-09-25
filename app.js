@@ -37,7 +37,9 @@ app.get('/r/', function(req, res) {
 
 });
 
-
+app.get('/', function(req, res){
+	res.send('Hello World');
+})
 
 app.listen(appEnv.port, function(){
   console.log("server starting on " + appEnv.url);
