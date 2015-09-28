@@ -2,19 +2,19 @@ var express = require('express');
 var cfenv = require('cfenv');
 var util = require('util');
 var bodyParser = require('body-parser');
-var url = require('./models/url')
+var url = require('./models/url');
 var app = express();
-
-// get the app environment from Cloud Foundry
-var appEnv = cfenv.getAppEnv();
 
 // serve the files out of ./public as our main files
 app.use(express.static(__dirname + '/public'));
 
 // Parse plain text bodies from request
-app.use(bodyParser.text({ type: 'text/plain', strict: true }));
+app.use(bodyParser.text({ type: 'text/plain' }));
 
-// Rota para encurtar url
+// get the app environment from Cloud Foundry
+var appEnv = cfenv.getAppEnv();
+
+// Shorten URLs
 app.post('/api/encurtar', function(req, res) {
   // Accept only text/plain
   if( !req.is('text') ) {
@@ -32,24 +32,19 @@ app.post('/api/encurtar', function(req, res) {
   }
 });
 
-// Rota para redirecionar para a url original
+// Redirect routes
 app.get('/r/:id', function(req, res) {
-	var Url = url.buscar(req.params.id);
-	console.log(Url);
-	if( Url ) {
-		res.redirect(301, Url.destino);
-	} else {
-		res.sendStatus(404);
-	}
-
-});
-
-app.get('/api/stats', function(req, res) {
-
+  var Url = url.buscar(req.params.id);
+  console.log(Url);
+  if( Url ) {
+    res.redirect(301, Url.destino);
+  } else {
+    res.sendStatus(404);
+  }
 });
 
 app.get('/', function(req, res){
-	res.send('Hello World');
+  res.type('text').send('Welcome to encurtador-node');
 })
 
 app.listen(appEnv.port, function(){
