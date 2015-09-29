@@ -14,19 +14,18 @@ app.use(bodyParser.text({ type: 'text/plain' }));
 
 // get the app environment from Cloud Foundry
 var appEnv = cfenv.getAppEnv();
-
 var redisService = appEnv.getService('rediscloud');
+
+// Connect to Redis
 var client;
-if(!appEnv.isLocal){
-  console.log("Using VCAP_SERVICES");
-  var url = util.format("redis://%s@%s:%s", 
-    redisService.credentials.password,
-    redisService.credentials.hostname,
-    redisService.credentials.port);
-  client = redis.createClient(url);
-} else {
-  console.log("Using local redis");
+if(appEnv.isLocal){
   client = redis.createClient();
+} else {
+  var redisUrl = util.format("redis://:%s@%s:%s", 
+    redisService.credentials['password'],
+    redisService.credentials['hostname'],
+    redisService.credentials['port']);
+  client = redis.createClient(redisUrl);
 }
 
 // Shorten URLs
