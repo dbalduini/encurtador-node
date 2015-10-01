@@ -14,6 +14,7 @@ app.use(bodyParser.text({ type: 'text/plain' }));
 
 // get the app environment from Cloud Foundry
 var appEnv = cfenv.getAppEnv();
+console.log(appEnv);
 var redisService = appEnv.getService('rediscloud');
 
 // Connect to Redis
@@ -21,6 +22,7 @@ var client;
 if(appEnv.isLocal){
   client = redis.createClient();
 } else {
+  console.log(redisService);
   var redisUrl = util.format("redis://:%s@%s:%s", 
     redisService.credentials['password'],
     redisService.credentials['hostname'],
