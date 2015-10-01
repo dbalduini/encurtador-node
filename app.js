@@ -15,20 +15,20 @@ app.use(bodyParser.text({ type: 'text/plain' }));
 // get the app environment from Cloud Foundry
 var appEnv = cfenv.getAppEnv();
 console.log(appEnv);
-var redisService = appEnv.getService('rediscloud');
+var redisService = appEnv.getServiceCreds('rediscloud');
 
 // Connect to Redis
 var client;
-if(appEnv.isLocal){
-  client = redis.createClient();
-} else {
+// if(appEnv.isLocal){
+//   client = redis.createClient();
+// } else {
   console.log(redisService);
   var redisUrl = util.format("redis://:%s@%s:%s", 
-    redisService.credentials['password'],
-    redisService.credentials['hostname'],
-    redisService.credentials['port']);
+    redisService['password'],
+    redisService['hostname'],
+    redisService['port']);
   client = redis.createClient(redisUrl);
-}
+// }
 
 // Shorten URLs
 app.post('/api/encurtar', function(req, res) {
